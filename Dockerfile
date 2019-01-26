@@ -6,7 +6,7 @@ RUN curl -o dovecot.tar.gz https://www.dovecot.org/releases/2.3/dovecot-2.3.4.ta
 RUN tar -xzvf dovecot.tar.gz -C /opt/build
 WORKDIR /opt/build/dovecot-2.3.4/
 RUN ls -la /opt/build
-RUN ./configure -prefix=/opt/dist/ --without-shared-libs --with-ssl=openssl --with-lz4 --with-lzma --with-libcap --with-sql=plugin --with-pgsql --with-mysql --with-sqlite --with-ldap=plugin --with-gssapi=plugin --with-rundir=/run/dovecot --localstatedir=/var --sysconfdir=/etc && make
+RUN ./configure -prefix=/opt/dist/ --without-shared-libs --with-ssl=openssl --with-lz4 --with-lzma --with-libcap --with-sql=plugin --with-pgsql --with-mysql --with-sqlite --with-ldap=plugin --with-gssapi=plugin --with-rundir=/run/dovecot --localstatedir=/var --sysconfdir=/etc && make 
 RUN make install
 WORKDIR /opt/build
 RUN git clone https://github.com/st3fan/dovecot-xaps-plugin.git
@@ -19,8 +19,8 @@ RUN make install
 RUN find /opt/dist/
 
 FROM alpine:latest
-RUN apk add --no-cache shadow ca-certificates
-COPY --from=build /opt/dist/* /usr/
+RUN apk add --update --no-cache shadow ca-certificates libcap
+COPY --from=build /opt/dist/ /usr/
 RUN groupadd -g 5000 vmail
 RUN useradd -r -u 5000 -g vmail vmail
 RUN groupadd -g 2525 postfix
