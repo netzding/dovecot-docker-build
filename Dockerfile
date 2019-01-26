@@ -20,7 +20,9 @@ RUN find /opt/dist/
 
 FROM alpine:latest
 RUN apk add --update --no-cache shadow ca-certificates libcap
-COPY --from=build /opt/dist/ /usr/
+COPY --from=build /opt/dist/ /opt/dovecot/
+ENV PATH="/opt/dovecot/bin:${PATH}"
+ENV PATH="/opt/dovecot/sbin:${PATH}"
 RUN groupadd -g 5000 vmail
 RUN useradd -r -u 5000 -g vmail vmail
 RUN groupadd -g 2525 postfix
