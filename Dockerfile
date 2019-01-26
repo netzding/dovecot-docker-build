@@ -6,21 +6,21 @@ RUN curl -o dovecot.tar.gz https://www.dovecot.org/releases/2.3/dovecot-2.3.4.ta
 RUN tar -xzvf dovecot.tar.gz -C /opt/build
 WORKDIR /opt/build/dovecot-2.3.4/
 RUN ls -la /opt/build
-RUN ./configure -prefix=/opt/dist/ --without-shared-libs --with-ssl=openssl --with-lz4 --with-lzma --with-libcap --with-sql=plugin --with-pgsql --with-mysql --with-sqlite --with-ldap=plugin --with-gssapi=plugin --with-rundir=/run/dovecot --localstatedir=/var --sysconfdir=/etc && make 
+RUN ./configure -prefix=/opt/dovecot/ --without-shared-libs --with-ssl=openssl --with-lz4 --with-lzma --with-libcap --with-sql=plugin --with-pgsql --with-mysql --with-sqlite --with-ldap=plugin --with-gssapi=plugin --with-rundir=/run/dovecot --localstatedir=/var --sysconfdir=/etc && make 
 RUN make install
 WORKDIR /opt/build
 RUN git clone https://github.com/st3fan/dovecot-xaps-plugin.git
 RUN mkdir /opt/build/dovecot-xaps-plugin/build
 WORKDIR /opt/build/dovecot-xaps-plugin/build
-RUN ln -s /opt/dist/include/dovecot /usr/include/dovecot
+RUN ln -s /opt/dovecot/include/dovecot /usr/include/dovecot
 RUN git checkout tags/v0.6
-RUN cmake .. -DCMAKE_BUILD_TYPE=Release -DLIBDOVECOT=/opt/dist/include/dovecot -DLIBDOVECOTSTORAGE=/opt/dist/include/dovecot
+RUN cmake .. -DCMAKE_BUILD_TYPE=Release -DLIBDOVECOT=/opt/dovecot/include/dovecot -DLIBDOVECOTSTORAGE=/opt/dovecot/include/dovecot
 RUN make install
-RUN find /opt/dist/
+RUN find /opt/dovecot/
 
 FROM alpine:latest
 RUN apk add --update --no-cache shadow ca-certificates libcap
-COPY --from=build /opt/dist/ /opt/dovecot/
+COPY --from=build /opt/dovecot/ /opt/dovecot/
 ENV PATH="/opt/dovecot/bin:${PATH}"
 ENV PATH="/opt/dovecot/sbin:${PATH}"
 RUN groupadd -g 5000 vmail
