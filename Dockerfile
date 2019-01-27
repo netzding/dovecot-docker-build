@@ -7,7 +7,7 @@ RUN mkdir -p /opt/build/
 RUN curl -o dovecot.tar.gz https://www.dovecot.org/releases/2.3/dovecot-2.3.4.tar.gz
 RUN tar -xzvf dovecot.tar.gz -C /opt/build
 WORKDIR /opt/build/dovecot-2.3.4/
-RUN ./configure -prefix=/opt/dovecot/ --without-shared-libs --with-ssl=openssl --with-lz4 --with-lzma --with-libcap --with-sql=plugin --with-pgsql --with-mysql --with-sqlite --with-ldap=plugin --with-solr --with-gssapi=plugin --with-rundir=/run/dovecot --localstatedir=/var --sysconfdir=/etc && make 
+RUN ./configure -prefix=/opt/dovecot/ --with-ssl=openssl --with-lz4 --with-lzma --with-libcap --with-sql=plugin --with-pgsql --with-mysql --with-sqlite --with-ldap=plugin --with-solr --with-gssapi=plugin --with-rundir=/run/dovecot --localstatedir=/var --sysconfdir=/etc && make
 RUN make install
 
 ## build Pigeonhole
@@ -39,12 +39,17 @@ RUN make install
 RUN find /opt/dovecot/ -name '*.la' | xargs rm -f
 
 FROM alpine:latest
-RUN apk add --update --no-cache shadow ca-certificates libcap
+RUN apk add --update --no-cache shadow ca-certificates libcap expat mariadb-connector-c libpq sqlite-libs
 COPY --from=build /opt/dovecot/ /opt/dovecot/
+COPY --from=build /usr/lib/dovecot/modules/ /opt/dovecot/lib/dovecot/
 ENV PATH="/opt/dovecot/bin:${PATH}"
 ENV PATH="/opt/dovecot/sbin:${PATH}"
 RUN groupadd -g 5000 vmail
 RUN useradd -r -u 5000 -g vmail vmail
 RUN groupadd -g 2525 postfix
 RUN useradd -r -u 2525 -g postfix postfix
+RUN groupadd -g 2500 dovecot
+RUN groupadd -g 2501 dovenull
+RUN useradd -r -M -d /opt/dovecot/lib/dovecot -s /bin/false -g dovecot dovecot
+RUN useradd -r -M -d /nonexistent -s /bin/false -g dovenull dovenull
 ENTRYPOINT ["dovecot", "-F"]
