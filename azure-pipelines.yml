@@ -1,17 +1,31 @@
-# Docker image
-# Build a Docker image to deploy, run, or push to a container registry.
-# Add steps that use Docker Compose, tag images, push to a registry, run an image, and more:
-# https://docs.microsoft.com/azure/devops/pipelines/languages/docker
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
 
 trigger:
 - master
 
 pool:
-  vmImage: 'Ubuntu-16.04'
-
-variables:
-  imageName: 'your-container-image-name:$(build.buildId)'
+  vmImage: 'ubuntu-latest'
 
 steps:
-- script: docker build -f Dockerfile -t $(imageName) .
-  displayName: 'docker build'
+- task: Docker@2
+  displayName: Login to DockerHub
+  inputs:
+    command: login
+    containerRegistry: dockerhub-nddevops
+
+- task: Docker@2
+  displayName: Build and Push
+  inputs:
+    command: buildAndPush
+    repository: netzding/clamav
+    tags: latest
+
+- task: Docker@2
+  displayName: Logout of DockerHub
+  inputs:
+    command: logout
+    containerRegistry: dockerhub-nddevops
+
