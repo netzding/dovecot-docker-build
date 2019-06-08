@@ -17,7 +17,7 @@ steps:
     containerRegistry: dockerhub-nddevops
 
 - task: Docker@2
-  displayname: Build
+  displayName: Build
   inputs:
     command: build
     repository: netzding/clamav
