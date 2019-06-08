@@ -17,9 +17,23 @@ steps:
     containerRegistry: dockerhub-nddevops
 
 - task: Docker@2
-  displayName: Build and Push
+  displayname: Build
   inputs:
-    command: buildAndPush
+    command: build
+    repository: netzding/clamav
+    tags: latest
+    arguments:
+      - --build-arg DOVECOT_SRC_URL=https://dovecot.org/releases/2.3/dovecot-2.3.6.tar.gz
+      - --build-arg DOVECOT_DIR=dovecot-2.3.6
+      - --build-arg PIGEONHOLE_SRC_URL=https://pigeonhole.dovecot.org/releases/2.3/dovecot-2.3-pigeonhole-0.5.6.tar.gz
+      - --build-arg PIGEONHOLE_DIR=dovecot-2.3-pigeonhole-0.5.6
+      - --build-arg XAPS_SRC_URL=https://github.com/st3fan/dovecot-xaps-plugin.git
+      - --build-arg XAPS_GIT_TAG=v0.8
+
+- task: Docker@2
+  displayName: Push
+  inputs:
+    command: push
     repository: netzding/clamav
     tags: latest
 
