@@ -26,7 +26,7 @@ steps:
     command: build
     repository: $(dockerImage)
     tags: $(dockerTag)
-    arguments: --build-arg DOVECOT_SRC_URL=https://dovecot.org/releases/2.3/dovecot-2.3.7.2.tar.gz --build-arg DOVECOT_DIR=dovecot-2.3.7.2 --build-arg PIGEONHOLE_SRC_URL=https://pigeonhole.dovecot.org/releases/2.3/dovecot-2.3-pigeonhole-0.5.7.2.tar.gz --build-arg PIGEONHOLE_DIR=dovecot-2.3-pigeonhole-0.5.7.2 --build-arg XAPS_SRC_URL=https://github.com/st3fan/dovecot-xaps-plugin.git --build-arg XAPS_GIT_TAG=v0.8
+    arguments: --build-arg DOVECOT_SRC_URL=https://dovecot.org/releases/2.3/dovecot-2.3.13.tar.gz --build-arg DOVECOT_DIR=dovecot-2.3.13 --build-arg PIGEONHOLE_SRC_URL=https://pigeonhole.dovecot.org/releases/2.3/dovecot-2.3-pigeonhole-0.5.13.tar.gz --build-arg PIGEONHOLE_DIR=dovecot-2.3-pigeonhole-0.5.13 --build-arg XAPS_SRC_URL=https://github.com/st3fan/dovecot-xaps-plugin.git --build-arg XAPS_GIT_TAG=v0.8
 
 - task: Docker@2
   displayName: Push
